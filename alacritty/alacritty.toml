@@ -1,0 +1,35 @@
+general.import = [
+  "~/.config/alacritty/themes/themes/tokyo_night.toml"
+]
+
+[env]
+TERM="xterm-256color"
+
+[window]
+padding.x=30
+padding.y=10
+decorations="Full"
+opacity=1.0
+blur=true
+option_as_alt="Both"
+title="Scrooge McDuck"
+decorations_theme_variant="Dark"
+
+[cursor]
+style.shape="Block"
+style.blinking="On"
+blink_interval=750
+
+
+[window.dimensions]
+columns=120
+lines=45
+
+[font]
+normal.family="FiraCode Nerd Font Mono"
+size=18
+
+[keyboard]
+bindings = [
+{ key="T", mods="Command", action="CreateNewTab" }    
+]
