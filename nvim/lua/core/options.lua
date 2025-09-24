@@ -10,7 +10,9 @@ vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.smartindent = true
-vim.opt.wrap = false
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.opt.wrapmargin = 2
 
 vim.opt.swapfile = false
 vim.opt.backup = false
@@ -45,4 +47,3 @@ vim.opt.winborder = 'rounded'
 
 -- fix issue
 vim.opt.clipboard = "unnamedplus"
-

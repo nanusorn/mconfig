@@ -13,29 +13,38 @@ return {
     "williamboman/mason-lspconfig.nvim",
     dependencies = { "neovim/nvim-lspconfig" },
     config = function()
-      local mason = require("mason")
       local mason_lspconfig = require("mason-lspconfig")
-      local lspconfig = require("lspconfig")
 
-      mason.setup()
       mason_lspconfig.setup({
-        ensure_installed = { 
-          "rust_analyzer", 
-          "gopls", 
-          "ts_ls" 
+        ensure_installed = {
+          "rust_analyzer",
+          "gopls",
+          "ts_ls"
         },
+        automatic_installation = true,
       })
 
-      -- Instead of setup_handlers:
-      for _, server in ipairs(mason_lspconfig.get_installed_servers()) do
-        lspconfig[server].setup({})
+      -- LSP keybindings and capabilities
+      local on_attach = function(client, bufnr)
+        local opts = { buffer = bufnr, remap = false }
+        vim.keymap.set("n", "gd", function() require('telescope.builtin').lsp_definitions() end, opts)
+        vim.keymap.set("n", "gr", function() require('telescope.builtin').lsp_references() end, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+        vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
       end
 
-      -- mason_lspconfig.setup_handlers({
-      --   function(server_name)
-      --     lspconfig[server_name].setup({})
-      --   end,
-      -- })
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+      local servers = { "rust_analyzer", "gopls", "ts_ls" }
+      for _, server in ipairs(servers) do
+        vim.lsp.config[server] = {
+          on_attach = on_attach,
+          capabilities = capabilities,
+        }
+      end
 
     end,
   },
