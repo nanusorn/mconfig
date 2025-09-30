@@ -7,6 +7,7 @@ config.tab_bar_at_bottom = true
 config.hide_tab_bar_if_only_one_tab = true
 config.window_close_confirmation = 'NeverPrompt'
 config.window_decorations = "RESIZE" -- disable the title bar but enable the resizable border
+config.native_macos_fullscreen_mode = true
 
 -- config.color_scheme = "Nord (Gogh)"
 config.color_scheme = "tokyonight_night"
@@ -34,6 +35,31 @@ config.colors = {
       fg_color = "#ffffff",
     },
   },
+}
+
+-- Pane focus aware borders
+wezterm.on('update-status', function(window, pane)
+  local overrides = window:get_config_overrides() or {}
+
+  -- Get all panes and check which is active
+  local active_pane = window:active_pane()
+  local is_active = active_pane:pane_id() == pane:pane_id()
+
+  if is_active then
+    overrides.colors = overrides.colors or {}
+    overrides.colors.split = "#7aa2f7" -- bright blue for active pane border
+  end
+
+  window:set_config_overrides(overrides)
+end)
+
+-- Set default split colors
+config.colors.split = "#3b4261" -- dim gray for inactive pane borders
+
+-- Dim inactive panes
+config.inactive_pane_hsb = {
+  saturation = 1.0,
+  brightness = 0.4,
 }
 
 -- here's my leader
@@ -134,11 +160,17 @@ config.background = {
   },
 }
 
+config.initial_cols = 300
+config.initial_rows = 80
+
 config.window_padding = {
-  left = 3,
-  right = 3,
-  top = 0,
-  bottom = 0,
+  left = 30,
+  right = 30,
+  top = 10,
+  bottom = 10,
 }
+
+-- window_position_left = 0
+-- window_position_top = 100
 
 return config
