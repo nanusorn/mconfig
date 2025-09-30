@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+wezterm.log_error("Config Dir: " .. wezterm.config_dir)
 local config = wezterm.config_builder()
 
 config.automatically_reload_config = true
@@ -70,6 +71,13 @@ config.leader = {
 }
 
 config.keys = {
+  {
+    key = "Enter",
+    mods = "SHIFT",
+    action = wezterm.action {
+      SendString = "\x1b\r",
+    }
+  },
   {
     key = 'w',
     mods = 'CMD',
