@@ -38,6 +38,21 @@ config.colors = {
   },
 }
 
+-- Start with maximized window
+wezterm.on('gui-startup', function(cmd)
+  local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
+  window:gui_window():maximize()
+end)
+
+-- Fix window sizing after waking from sleep on macOS
+wezterm.on('window-focus-changed', function(window, pane)
+  if window:is_focused() then
+    -- Force a resize calculation by toggling the pane zoom state twice
+    window:perform_action(wezterm.action.TogglePaneZoomState, pane)
+    window:perform_action(wezterm.action.TogglePaneZoomState, pane)
+  end
+end)
+
 -- Pane focus aware borders
 wezterm.on('update-status', function(window, pane)
   local overrides = window:get_config_overrides() or {}
@@ -60,7 +75,7 @@ config.colors.split = "#3b4261" -- dim gray for inactive pane borders
 -- Dim inactive panes
 config.inactive_pane_hsb = {
   saturation = 1.0,
-  brightness = 0.4,
+  brightness = 0.75,
 }
 
 -- here's my leader
