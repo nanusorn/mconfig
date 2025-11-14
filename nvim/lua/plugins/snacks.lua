@@ -23,10 +23,26 @@ return {
         enabled = true
       },
       explorer = {
-        enabled = true
+        enabled = false
       },
       picker = {
-        enabled = true
+        enabled = true,
+        win = {
+          input = {
+            keys = {
+              ["<C-j>"] = "list_down",
+              ["<C-k>"] = "list_up",
+              ["<Down>"] = "list_down",
+              ["<Up>"] = "list_up",
+            }
+          },
+          list = {
+            keys = {
+              ["<Tab>"] = "list_down",
+              ["<S-Tab>"] = "list_up",
+            }
+          }
+        }
       },
       rename = {
         enabled = true
@@ -38,6 +54,7 @@ return {
 
     -- -- NOTE: Keymaps
     keys = {
+      { "<leader>;",  function() Snacks.dashboard() end,                     desc = "Open Dashboard" },
       { "<leader>lg", function() require("snacks").lazygit() end,            desc = "Lazygit" },
       { "<leader>gl", function() require("snacks").lazygit.log() end,        desc = "Lazygit Logs" },
       { "<leader>es", function() require("snacks").explorer() end,           desc = "Open Snacks Explorer" },
@@ -78,7 +95,7 @@ return {
       -- Snacks Picker
       { "<leader>pf",  function() require("snacks").picker.files() end,                                             desc = "Find Files (Snacks Picker)" },
       { "<leader>pc",  function() require("snacks").picker.files({ cwd = "~/dotfiles/nvim/.config/nvim/lua" }) end, desc = "Find Config File" },
-      { "<leader>ps",  function() require("snacks").picker.grep() end,                                              desc = "Grep word" },
+      -- { "<leader>ps",  function() require("snacks").picker.grep() end,                                              desc = "Grep word" },
       { "<leader>pws", function() require("snacks").picker.grep_word() end,                                         desc = "Search Visual selection or Word", mode = { "n", "x" } },
       { "<leader>pk",  function() require("snacks").picker.keymaps({ layout = "ivy" }) end,                         desc = "Search Keymaps (Snacks Picker)" },
 
@@ -89,6 +106,22 @@ return {
       { "<leader>th",  function() require("snacks").picker.colorschemes({ layout = "ivy" }) end,                    desc = "Pick Color Schemes" },
       { "<leader>vh",  function() require("snacks").picker.help() end,                                              desc = "Help Pages" },
     },
+
+    init = function()
+      vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function()
+          -- Show dashboard if no args or if opening a directory
+          if vim.fn.argc() == 0 then
+            require("snacks").dashboard()
+            -- elseif vim.fn.argc() == 1 then
+            --   local arg = vim.fn.argv(0)
+            --   if vim.fn.isdirectory(arg) == 1 then
+            --     require("snacks").dashboard()
+            --   end
+          end
+        end,
+      })
+    end,
   },
 
   -- NOTE: todo comments w/ snacks

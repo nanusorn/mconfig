@@ -33,6 +33,12 @@ return {
         vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
         vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
         vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
+
+        -- Diagnostic keymaps
+        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
+        vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
       end
 
       local capabilities = vim.lsp.protocol.make_client_capabilities()
