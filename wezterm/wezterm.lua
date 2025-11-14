@@ -45,6 +45,38 @@ local function save_workspace_state(window)
   return false
 end
 
+-- Helper function to create a 4-pane personal workspace
+local function create_personal_workspace(window, pane)
+  local mux_window = window:mux_window()
+  local tab = mux_window:active_tab()
+
+  -- Close all existing panes except the first one
+  local panes = tab:panes()
+  for i = #panes, 2, -1 do
+    panes[i]:activate()
+    window:perform_action(act.CloseCurrentPane { confirm = false }, panes[i])
+  end
+
+  -- Start with the base pane (will become top pane)
+  local base_pane = tab:active_pane()
+  base_pane:activate()
+
+  -- Step 1: Split vertically to create bottom pane (75% top, 25% bottom)
+  base_pane:split { direction = 'Bottom', size = 0.25 }
+
+  -- Step 2: In the bottom pane, split right to create bottom-right (50% left, 50% right)
+  local bottom_pane = tab:active_pane()
+  bottom_pane:split { direction = 'Right', size = 0.5 }
+
+  -- Step 3: Go to top pane and split right to create top-right (60% left, 40% right)
+  window:perform_action(act.ActivatePaneDirection 'Up', bottom_pane)
+  local top_pane = tab:active_pane()
+  top_pane:split { direction = 'Right', size = 0.4 }
+
+  -- Return focus to top-left pane
+  window:perform_action(act.ActivatePaneDirection 'Left', top_pane)
+end
+
 -- Helper function to restore workspace state
 local function restore_workspace_state(window)
   local file = io.open(workspace_state_file, "r")
@@ -80,28 +112,90 @@ local function restore_workspace_state(window)
 
     -- Recreate panes based on their relative positions
     local base_pane = tab:active_pane()
-    local created_panes = { base_pane }
+    local created_panes = {
+      { pane = base_pane, info = saved_tab.panes[1] }
+    }
+
+    -- Helper function to find which pane to split from
+    local function find_parent_pane(target_info, existing_panes)
+      -- Check for vertical split (same left position, different top)
+      for idx, entry in ipairs(existing_panes) do
+        local existing_info = entry.info
+        if target_info.left == existing_info.left and
+            target_info.width == existing_info.width and
+            target_info.top == existing_info.top + existing_info.height then
+          return idx, 'Bottom'
+        end
+      end
+
+      -- Check for horizontal split (same top position, different left)
+      for idx, entry in ipairs(existing_panes) do
+        local existing_info = entry.info
+        if target_info.top == existing_info.top and
+            target_info.height == existing_info.height and
+            target_info.left == existing_info.left + existing_info.width then
+          return idx, 'Right'
+        end
+      end
+
+      -- Fallback: find best overlap match
+      local best_idx = 1
+      local best_overlap = 0
+
+      for idx, entry in ipairs(existing_panes) do
+        local existing_info = entry.info
+
+        -- Calculate overlap area
+        local overlap_left = math.max(target_info.left, existing_info.left)
+        local overlap_top = math.max(target_info.top, existing_info.top)
+        local overlap_right = math.min(
+          target_info.left + target_info.width,
+          existing_info.left + existing_info.width
+        )
+        local overlap_bottom = math.min(
+          target_info.top + target_info.height,
+          existing_info.top + existing_info.height
+        )
+
+        if overlap_right > overlap_left and overlap_bottom > overlap_top then
+          local overlap = (overlap_right - overlap_left) * (overlap_bottom - overlap_top)
+          if overlap > best_overlap then
+            best_overlap = overlap
+            best_idx = idx
+          end
+        end
+      end
+
+      -- Determine direction based on relative position
+      local parent_info = created_panes[best_idx].info
+      if target_info.top >= parent_info.top + parent_info.height then
+        return best_idx, 'Bottom'
+      else
+        return best_idx, 'Right'
+      end
+    end
 
     for i = 2, #saved_tab.panes do
       local pane_info = saved_tab.panes[i]
-      local prev_pane_info = saved_tab.panes[i - 1]
 
-      -- Determine split direction based on position
-      local direction = 'Right'
+      -- Find which pane to split from
+      local parent_idx, direction = find_parent_pane(pane_info, created_panes)
+      local parent_entry = created_panes[parent_idx]
+
+      -- Calculate split size
       local size = 0.5
-
-      if pane_info.top > prev_pane_info.top then
-        direction = 'Bottom'
-        size = pane_info.height / (pane_info.height + prev_pane_info.height)
-      elseif pane_info.left > prev_pane_info.left then
-        direction = 'Right'
-        size = pane_info.width / (pane_info.width + prev_pane_info.width)
+      if direction == 'Bottom' then
+        local total_height = pane_info.height + parent_entry.info.height
+        size = pane_info.height / total_height
+      else -- 'Right'
+        local total_width = pane_info.width + parent_entry.info.width
+        size = pane_info.width / total_width
       end
 
-      -- Split from the previous pane
-      created_panes[i - 1]:activate()
-      local new_pane = created_panes[i - 1]:split { direction = direction, size = size }
-      table.insert(created_panes, new_pane)
+      -- Split from the parent pane
+      parent_entry.pane:activate()
+      local new_pane = parent_entry.pane:split { direction = direction, size = size }
+      table.insert(created_panes, { pane = new_pane, info = pane_info })
     end
 
     return true
@@ -120,32 +214,35 @@ config.native_macos_fullscreen_mode = true
 
 -- config.color_scheme = "Nord (Gogh)"
 config.color_scheme = "tokyonight_night"
+-- config.color_scheme = "Dracula"
 
-config.font = wezterm.font("BlexMono Nerd Font")
+-- config.font = wezterm.font("JetBrains Mono")
+-- config.font = wezterm.font("FiraCode Nerd Font Mono")
+config.font = wezterm.font("Menlo")
 config.font_size = 18
 config.line_height = 1.1
 
-config.colors = {
-  cursor_bg = "#7aa2f7",
-  cursor_border = "#7aa2f7",
-  tab_bar = {
-    background = "#1a1b26",
-    active_tab = {
-      bg_color = "#7aa2f7",
-      fg_color = "#1a1b26",
-      intensity = "Bold",
-    },
-    inactive_tab = {
-      bg_color = "#2a2e3f",
-      fg_color = "#7aa2f7",
-    },
-    inactive_tab_hover = {
-      bg_color = "#3b4261",
-      fg_color = "#ffffff",
-    },
-  },
-}
-
+-- config.colors = {
+--   cursor_bg = "#7aa2f7",
+--   cursor_border = "#7aa2f7",
+--   tab_bar = {
+--     background = "#1a1b26",
+--     active_tab = {
+--       bg_color = "#7aa2f7",
+--       fg_color = "#1a1b26",
+--       intensity = "Bold",
+--     },
+--     inactive_tab = {
+--       bg_color = "#2a2e3f",
+--       fg_color = "#7aa2f7",
+--     },
+--     inactive_tab_hover = {
+--       bg_color = "#3b4261",
+--       fg_color = "#ffffff",
+--     },
+--   },
+-- }
+--
 -- Start with maximized window
 wezterm.on('gui-startup', function(cmd)
   local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
@@ -179,7 +276,7 @@ wezterm.on('update-status', function(window, pane)
 end)
 
 -- Set default split colors
-config.colors.split = "#3b4261" -- dim gray for inactive pane borders
+-- config.colors.split = "#3b4261" -- dim gray for inactive pane borders
 
 -- Dim inactive panes
 config.inactive_pane_hsb = {
@@ -204,28 +301,28 @@ config.keys = {
   },
   {
     key = 'w',
-    mods = 'CMD',
+    mods = 'SUPER',
     action = wezterm.action.CloseCurrentPane {
       confirm = false,
     },
   },
   {
     key = 'd',
-    mods = 'CMD',
+    mods = 'SUPER',
     action = wezterm.action.SplitHorizontal {
       domain = 'CurrentPaneDomain',
     },
   },
   {
     key = 'd',
-    mods = 'CMD|SHIFT',
+    mods = 'SUPER|SHIFT',
     action = wezterm.action.SplitVertical {
       domain = 'CurrentPaneDomain',
     },
   },
   {
     key = 'k',
-    mods = 'CMD',
+    mods = 'SUPER',
     action = wezterm.action.SendString 'clear\n'
   },
   {
@@ -290,6 +387,14 @@ config.keys = {
       end
     end),
   },
+  {
+    key = 'p',
+    mods = 'LEADER',
+    action = wezterm.action_callback(function(window, pane)
+      create_personal_workspace(window, pane)
+      window:toast_notification('WezTerm', 'Personal workspace created!', nil, 2000)
+    end),
+  },
 }
 
 config.background = {
@@ -311,7 +416,7 @@ config.background = {
     },
     width = "100%",
     height = "100%",
-    opacity = 0.55,
+    opacity = 0.80,
   },
 }
 
