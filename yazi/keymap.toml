@@ -1,0 +1,14 @@
+[[mgr.prepend_keymap]]
+on   = [ "g", "i" ]
+run  = "plugin lazygit"
+desc = "run lazygit"
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "c" ]
+run  = "cd ~/.config"
+desc = "Cd to ~/.config"
+
+[[mgr.prepend_keymap]]
+on   = ["b","r"]
+run  = "plugin fazif fazifrg"
+desc = "Search content in selected files with ripgrep+fzf"
