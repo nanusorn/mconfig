@@ -42,43 +42,43 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 })
 
 -- Keymaps for Typst
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "typst",
-	callback = function()
-		local opts = { buffer = true, silent = true }
-
-		-- Compile current file (shows full output)
-		vim.keymap.set("n", "<leader>tc", function()
-			vim.cmd("!typst compile %")
-		end, vim.tbl_extend("force", opts, { desc = "Typst: Compile (show output)" }))
-
-		-- Check for errors (verbose)
-		vim.keymap.set("n", "<leader>te", function()
-			local file = vim.fn.expand("%:p")
-			vim.cmd("split")
-			vim.cmd("terminal typst compile '" .. file .. "'")
-		end, vim.tbl_extend("force", opts, { desc = "Typst: Check errors" }))
-
-		-- Compile and open PDF
-		vim.keymap.set("n", "<leader>tp", function()
-			local file = vim.fn.expand("%:p")
-			local pdf = vim.fn.expand("%:p:r") .. ".pdf"
-			vim.fn.system(string.format("typst compile '%s'", file))
-			vim.fn.system(string.format("open '%s'", pdf))
-		end, vim.tbl_extend("force", opts, { desc = "Typst: Compile & Preview" }))
-
-		-- Start watch mode in background
-		vim.keymap.set("n", "<leader>tw", function()
-			local file = vim.fn.expand("%:p")
-			local cmd = string.format("typst watch '%s'", file)
-			vim.fn.jobstart(cmd, {
-				on_stdout = function(_, data)
-					if data and #data > 0 then
-						vim.notify("Typst watch: " .. table.concat(data, "\n"), vim.log.levels.INFO)
-					end
-				end,
-			})
-			vim.notify("Started Typst watch mode", vim.log.levels.INFO)
-		end, vim.tbl_extend("force", opts, { desc = "Typst: Watch mode" }))
-	end,
-})
+-- vim.api.nvim_create_autocmd("FileType", {
+-- 	pattern = "typst",
+-- 	callback = function()
+-- 		local opts = { buffer = true, silent = true }
+--
+-- 		-- Compile current file (shows full output)
+-- 		vim.keymap.set("n", "<leader>tc", function()
+-- 			vim.cmd("!typst compile %")
+-- 		end, vim.tbl_extend("force", opts, { desc = "Typst: Compile (show output)" }))
+--
+-- 		-- Check for errors (verbose)
+-- 		vim.keymap.set("n", "<leader>te", function()
+-- 			local file = vim.fn.expand("%:p")
+-- 			vim.cmd("split")
+-- 			vim.cmd("terminal typst compile '" .. file .. "'")
+-- 		end, vim.tbl_extend("force", opts, { desc = "Typst: Check errors" }))
+--
+-- 		-- Compile and open PDF
+-- 		vim.keymap.set("n", "<leader>tp", function()
+-- 			local file = vim.fn.expand("%:p")
+-- 			local pdf = vim.fn.expand("%:p:r") .. ".pdf"
+-- 			vim.fn.system(string.format("typst compile '%s'", file))
+-- 			vim.fn.system(string.format("open '%s'", pdf))
+-- 		end, vim.tbl_extend("force", opts, { desc = "Typst: Compile & Preview" }))
+--
+-- 		-- Start watch mode in background
+-- 		vim.keymap.set("n", "<leader>tw", function()
+-- 			local file = vim.fn.expand("%:p")
+-- 			local cmd = string.format("typst watch '%s'", file)
+-- 			vim.fn.jobstart(cmd, {
+-- 				on_stdout = function(_, data)
+-- 					if data and #data > 0 then
+-- 						vim.notify("Typst watch: " .. table.concat(data, "\n"), vim.log.levels.INFO)
+-- 					end
+-- 				end,
+-- 			})
+-- 			vim.notify("Started Typst watch mode", vim.log.levels.INFO)
+-- 		end, vim.tbl_extend("force", opts, { desc = "Typst: Watch mode" }))
+-- 	end,
+-- })
