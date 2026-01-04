@@ -29,9 +29,10 @@ end, { expr = true, desc = 'Previous completion item' })
 -- Pick
 vim.keymap.set('n', '<leader>f', '<Cmd>Pick files<CR>')
 vim.keymap.set('n', '<leader>h', '<Cmd>Pick help<CR>')
+vim.keymap.set('n', '<leader>p', '<Cmd>Pick explore<CR>', { desc = 'Explore files with picker' })
 
--- Oil
-vim.keymap.set('n', '<leader>e', '<Cmd>Pick explore<CR>')
+-- Oil file explorer
+vim.keymap.set('n', '<leader>e', '<Cmd>Oil<CR>', { desc = 'Open Oil file explorer' })
 
 -- Move selected line(s) up/down in Visual mode (v, V)
 vim.keymap.set('v', '<A-j>', ':m ">+1<CR>gv=gv', { desc = 'Move line down' })

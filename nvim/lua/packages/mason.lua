@@ -11,6 +11,7 @@ require("mason-tool-installer").setup({
 		"gopls",
 		"dockerfile-language-server",
 		"bash-language-server",
-		"tinymist"
+		"tinymist",
+		"codelldb"
 	},
 })

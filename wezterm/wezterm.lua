@@ -216,11 +216,12 @@ config.native_macos_fullscreen_mode = true
 config.color_scheme = "tokyonight_night"
 -- config.color_scheme = "Dracula"
 
--- config.font = wezterm.font("JetBrains Mono")
+config.font = wezterm.font("JetBrains Mono")
 -- config.font = wezterm.font("FiraCode Nerd Font Mono")
-config.font = wezterm.font("Menlo")
+-- config.font = wezterm.font("Menlo")
+-- config.font = wezterm.font("Iosevka Term")
 config.font_size = 18
-config.line_height = 1.1
+config.line_height = 1.2
 
 -- config.colors = {
 --   cursor_bg = "#7aa2f7",
