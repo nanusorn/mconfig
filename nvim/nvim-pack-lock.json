@@ -1,0 +1,60 @@
+{
+  "plugins": {
+    "indentmini.nvim": {
+      "rev": "e0f1e381a3949ea6757365fa33f8f1722d3eae90",
+      "src": "https://github.com/nvimdev/indentmini.nvim"
+    },
+    "mason-lspconfig.nvim": {
+      "rev": "4cfe411526a7a99c18281135e8b4765ae6330d15",
+      "src": "https://github.com/mason-org/mason-lspconfig.nvim"
+    },
+    "mason-nvim-dap.nvim": {
+      "rev": "9a10e096703966335bd5c46c8c875d5b0690dade",
+      "src": "https://github.com/jay-babu/mason-nvim-dap.nvim"
+    },
+    "mason-tool-installer.nvim": {
+      "rev": "517ef5994ef9d6b738322664d5fdd948f0fdeb46",
+      "src": "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim"
+    },
+    "mason.nvim": {
+      "rev": "57e5a8addb8c71fb063ee4acda466c7cf6ad2800",
+      "src": "https://github.com/mason-org/mason.nvim"
+    },
+    "mini.pick": {
+      "rev": "8cb40ee55dd156957b1116eded6135e6aeaa078b",
+      "src": "https://github.com/echasnovski/mini.pick"
+    },
+    "nvim-dap": {
+      "rev": "7bb46cc612bb127d7b0e3e9ed695267d830824ec",
+      "src": "https://github.com/mfussenegger/nvim-dap"
+    },
+    "nvim-dap-ui": {
+      "rev": "cf91d5e2d07c72903d052f5207511bf7ecdb7122",
+      "src": "https://github.com/rcarriga/nvim-dap-ui"
+    },
+    "nvim-lspconfig": {
+      "rev": "41ceb6bba3a40128b7841f5b7f5a9dae7201e823",
+      "src": "https://github.com/neovim/nvim-lspconfig"
+    },
+    "nvim-nio": {
+      "rev": "21f5324bfac14e22ba26553caf69ec76ae8a7662",
+      "src": "https://github.com/nvim-neotest/nvim-nio"
+    },
+    "nvim-treesitter": {
+      "rev": "7efc1b58a8061d29786860006c7257c90a5196dc",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "oil.nvim": {
+      "rev": "963c8d2c5538c4a896a31f396b8a5a2683e254dc",
+      "src": "https://github.com/stevearc/oil.nvim"
+    },
+    "tokyonight.nvim": {
+      "rev": "5da1b76e64daf4c5d410f06bcb6b9cb640da7dfd",
+      "src": "https://github.com/folke/tokyonight.nvim"
+    },
+    "typst-preview.nvim": {
+      "rev": "e123a7ab64e52d836e00dea9251e85b201f38966",
+      "src": "https://github.com/chomosuke/typst-preview.nvim"
+    }
+  }
+}

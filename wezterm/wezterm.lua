@@ -208,7 +208,7 @@ config.automatically_reload_config = true
 config.enable_tab_bar = true
 config.tab_bar_at_bottom = true
 config.hide_tab_bar_if_only_one_tab = true
-config.window_close_confirmation = 'NeverPrompt'
+config.window_close_confirmation = 'AlwaysPrompt'
 config.window_decorations = "RESIZE" -- disable the title bar but enable the resizable border
 config.native_macos_fullscreen_mode = true
 
@@ -249,7 +249,7 @@ config.line_height = 1.2
 wezterm.on('gui-startup', function(cmd)
   local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
   window:gui_window():maximize()
-  pane:send_text('neofetch\n')
+  pane:send_text('fastfetch\n')
 end)
 
 -- Fix window sizing after waking from sleep on macOS
