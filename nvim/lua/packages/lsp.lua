@@ -7,6 +7,7 @@ vim.lsp.enable({
 	"gopls",
 	"dockerls",
 	"bashls",
+	"elixirls",
 })
 
 -- Tinymist needs special configuration using new API

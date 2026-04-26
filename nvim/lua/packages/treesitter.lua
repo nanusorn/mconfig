@@ -28,6 +28,10 @@ require("nvim-treesitter").install({
 	"vim",
 	"vimdoc",
 	"typst",
+	"elixir",
+	"eex",
+	"heex",
+	"erlang",
 })
 
 -- Enable Tree-sitter highlighting for all buffers
@@ -50,6 +54,10 @@ vim.api.nvim_create_autocmd({ "LspAttach", "FileType", "BufEnter" }, {
 		"vim",
 		"help",
 		"typst",
+		"elixir",
+		"eelixir",
+		"heex",
+		"erlang",
 	},
 	callback = function(args)
 		-- Set up LSP omnifunc for manual completion (on LspAttach)
@@ -89,6 +97,10 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			"vim",
 			"help",
 			"typst",
+			"elixir",
+			"eelixir",
+			"heex",
+			"erlang",
 		}
 		for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 			for _, ft in ipairs(supported_fts) do

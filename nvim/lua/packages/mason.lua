@@ -12,6 +12,7 @@ require("mason-tool-installer").setup({
 		"dockerfile-language-server",
 		"bash-language-server",
 		"tinymist",
-		"codelldb"
+		"codelldb",
+		"elixir-ls",
 	},
 })
